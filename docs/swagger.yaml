@@ -1,0 +1,1007 @@
+definitions:
+  auth.Credential:
+    properties:
+      email:
+        maxLength: 64
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.RefreshTokenRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
+  auth.RefreshTokenResponse:
+    properties:
+      tokens:
+        $ref: '#/definitions/domain.Tokens'
+    required:
+    - tokens
+    type: object
+  auth.UserRequest:
+    properties:
+      email:
+        maxLength: 64
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        maxLength: 64
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  auth.UserResponse:
+    properties:
+      tokens:
+        $ref: '#/definitions/domain.Tokens'
+      user:
+        $ref: '#/definitions/domain.User'
+    required:
+    - user
+    type: object
+  domain.Tokens:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    required:
+    - accessToken
+    - refreshToken
+    type: object
+  domain.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      isVerified:
+        type: boolean
+      passwordHash:
+        minLength: 8
+        type: string
+      status:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - passwordHash
+    - status
+    - username
+    type: object
+  domain.Workspace:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  domain.WorkspaceData:
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/domain.WorkspaceMember'
+        type: array
+      queues:
+        items:
+          $ref: '#/definitions/domain.WorkspaceQueue'
+        type: array
+      schedules:
+        items:
+          $ref: '#/definitions/domain.WorkspaceSchedule'
+        type: array
+      tasks:
+        items:
+          $ref: '#/definitions/domain.WorkspaceTask'
+        type: array
+      workspace:
+        $ref: '#/definitions/domain.Workspace'
+    required:
+    - workspace
+    type: object
+  domain.WorkspaceMember:
+    properties:
+      id:
+        type: integer
+      member:
+        $ref: '#/definitions/domain.User'
+      status:
+        type: string
+      workspaceId:
+        type: integer
+    required:
+    - member
+    - status
+    - workspaceId
+    type: object
+  domain.WorkspaceQueue:
+    properties:
+      id:
+        type: integer
+      members:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      workspaceId:
+        type: integer
+    required:
+    - name
+    - workspaceId
+    type: object
+  domain.WorkspaceSchedule:
+    properties:
+      id:
+        type: integer
+      records:
+        items:
+          $ref: '#/definitions/domain.WorkspaceScheduleRecord'
+        type: array
+      startDate:
+        type: string
+      workspaceId:
+        type: integer
+    required:
+    - records
+    - startDate
+    - workspaceId
+    type: object
+  domain.WorkspaceScheduleRecord:
+    properties:
+      description:
+        type: string
+      endDateTime:
+        type: string
+      id:
+        type: integer
+      scheduleId:
+        type: integer
+      startDateTime:
+        type: string
+      taskId:
+        type: integer
+    required:
+    - endDateTime
+    - scheduleId
+    - startDateTime
+    - taskId
+    type: object
+  domain.WorkspaceTask:
+    properties:
+      creator:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      workspaceId:
+        type: integer
+    required:
+    - name
+    - workspaceId
+    type: object
+  error.ServerErrorResponse:
+    properties:
+      code:
+        type: string
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  success.ServerSuccessResponse:
+    properties:
+      msg:
+        type: string
+      success:
+        type: boolean
+    type: object
+  user.UsersDataRequest:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
+  user.UsersDataResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/domain.User'
+        type: array
+    required:
+    - users
+    type: object
+  workspace.WorkspaceInviteResponse:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  workspace.WorkspaceMemberRequest:
+    properties:
+      email:
+        type: string
+      status:
+        type: string
+    required:
+    - email
+    - status
+    type: object
+  workspace.WorkspaceRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  workspace.WorkspaceTaskRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  workspace_queue.WorkspaceQueueRequest:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - name
+    type: object
+info:
+  contact:
+    email: andreipetrov080@gmail.com
+    name: API Support
+  description: Swagger API for Golang Project Schedule Manager.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Schedule Manager Swagger API
+  version: "1.0"
+paths:
+  /auth/confirm-email-again:
+    post:
+      consumes:
+      - application/json
+      description: Confirm email again
+      parameters:
+      - description: User email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      tags:
+      - Authorization
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Refresh token
+      parameters:
+      - description: Enter refresh token
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RefreshTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      tags:
+      - Authorization
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Authorization in the account
+      parameters:
+      - description: Enter user credential
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/auth.Credential'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      tags:
+      - Authorization
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Creating an account
+      parameters:
+      - description: Enter user credential
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      tags:
+      - Authorization
+  /auth/status:
+    get:
+      consumes:
+      - application/json
+      description: Check authorization status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/success.ServerSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Authorization
+  /auth/verify-email:
+    get:
+      consumes:
+      - application/json
+      description: Verify email address
+      parameters:
+      - description: Verification token
+        in: query
+        name: token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      tags:
+      - Authorization
+  /user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user data by id
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - User
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get current user data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - User
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get users data
+      parameters:
+      - description: User ids
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/user.UsersDataRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UsersDataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - User
+  /workspace:
+    post:
+      consumes:
+      - application/json
+      description: Create workspace
+      parameters:
+      - description: Workspace data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/workspace.WorkspaceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+    put:
+      consumes:
+      - application/json
+      description: Update workspace
+      parameters:
+      - description: Workspace data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/workspace.WorkspaceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove workspace by id
+      parameters:
+      - description: Workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/success.ServerSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+    get:
+      consumes:
+      - application/json
+      description: Get workspace by id
+      parameters:
+      - description: Workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/{id}/invite:
+    get:
+      consumes:
+      - application/json
+      description: Get invite token
+      parameters:
+      - description: Workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/workspace.WorkspaceInviteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/{id}/member:
+    post:
+      consumes:
+      - application/json
+      description: Create workspace task
+      parameters:
+      - description: Workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Workspace member data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/workspace.WorkspaceMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceMember'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/{id}/queue:
+    post:
+      consumes:
+      - application/json
+      description: Create workspace queue
+      parameters:
+      - description: Workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Workspace queue data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/workspace_queue.WorkspaceQueueRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceQueue'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/{id}/task:
+    post:
+      consumes:
+      - application/json
+      description: Create workspace task
+      parameters:
+      - description: Workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Workspace task data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/workspace.WorkspaceTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceTask'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/queue/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove workspace queue by id
+      parameters:
+      - description: Workspace queue id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/success.ServerSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/queue/{id}/join:
+    post:
+      consumes:
+      - application/json
+      description: Create workspace queue
+      parameters:
+      - description: Workspace queue id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceQueue'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/queue/{id}/leave/{uid}:
+    delete:
+      consumes:
+      - application/json
+      description: Create workspace queue
+      parameters:
+      - description: Workspace queue id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User id
+        in: path
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.WorkspaceQueue'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspace/task/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove workspace by id
+      parameters:
+      - description: Workspace task id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/success.ServerSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspaces/me:
+    get:
+      consumes:
+      - application/json
+      description: Get current user workspaces
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.WorkspaceData'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+  /workspaces/search:
+    get:
+      consumes:
+      - application/json
+      description: Search workspaces
+      parameters:
+      - description: Workspace name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.WorkspaceData'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error.ServerErrorResponse'
+      security:
+      - AuthorizationKey: []
+      tags:
+      - Workspace
+securityDefinitions:
+  AuthorizationKey:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,31 @@
+services:
+  app:
+    image: app-schedule-manager
+    container_name: app-schedule-manager
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./.bin/:/root/
+      - ./configs/:/root/configs/
+    env_file:
+      - .env
+
+  debug:
+    image: app-schedule-manager
+    container_name: app-schedule-manager
+    build:
+      context: .
+      dockerfile: Dockerfile.debug
+    ports:
+      - "8000:8000"
+      - "2345:2345"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./.bin/:/root/
+      - ./configs/:/root/configs/
+    env_file:
+      - .env

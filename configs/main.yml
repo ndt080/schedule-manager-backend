@@ -1,0 +1,13 @@
+http:
+  port: 8000
+  maxHeaderBytes: 1048576 # 1 << 20
+  readTimeout: 30s
+  writeTimeout: 30s
+
+auth:
+  signingKey: grk#iwoerjn%324lskdfnHsdj3skldf
+  accessTokenTTL: 720h #30 days
+  refreshTokenTTL: 1440h #60 days
+
+smtp:
+
